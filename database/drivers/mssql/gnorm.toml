@@ -1,0 +1,43 @@
+# This is the gnorm.toml that generates the DB access code for postgres databases.
+# Its output is contained in the database/drivers/postgres/gnorm driectory.  It
+# assumes you have a postgres instance running locally.
+
+ConnStr = "sqlserver://sa:Gettone@12345@192.168.0.9/?database=B15"
+
+DBType = "sqlserver"
+
+Schemas = ["information_schema"]
+
+NameConversion = "{{. | pascal}}"
+
+IncludeTables = ["tables", "columns"]
+
+PostRun = ["goimports", "-w", "$GNORMFILE"]
+
+StaticDir = "_static"
+
+OutputDir = "gnorm"
+
+[TablePaths]
+"{{toLower .Table}}/{{toLower .Table}}.go" = "templates/table.gotmpl"
+
+[SchemaPaths]
+"fields.go" = "templates/schema.gotmpl"
+
+[TypeMap]
+"timestamp with time zone" = "time.Time"
+"text" = "string"
+"boolean" = "bool"
+"uuid" = "uuid.UUID"
+"character varying" = "string"
+"integer" = "int"
+"numeric" = "float64"
+
+[NullableTypeMap]
+"timestamp with time zone" = "pq.NullTime"
+"text" = "sql.NullString"
+"boolean" = "sql.NullBool"
+"uuid" = "uuid.NullUUID"
+"character varying" = "sql.NullString"
+"integer" = "sql.NullInt64"
+"numeric" = "sql.NullFloat64"
